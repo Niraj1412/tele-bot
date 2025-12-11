@@ -1,0 +1,5 @@
+python-telegram-bot==21.4  # Latest stable as of 2025
+sticker-convert==2.10.0    # Assuming latest; check PyPI for updates
+requests==2.32.3
+python-dotenv==1.0.1       # For env vars
+telethon==1.39.0
