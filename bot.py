@@ -38,8 +38,20 @@ TELETHON_API_ID = os.getenv("TELETHON_API_ID")
 TELETHON_API_HASH = os.getenv("TELETHON_API_HASH")
 USE_TELETHON = bool(TELETHON_API_ID and TELETHON_API_HASH)
 
-# sticker-convert binary (allow override)
-STICKER_CONVERT_BIN = os.getenv("STICKER_CONVERT_BIN", "sticker-convert")
+# sticker-convert binary (allow override, but fallback to PATH if override missing)
+def _resolve_sticker_convert_bin():
+    override = os.getenv("STICKER_CONVERT_BIN")
+    if override:
+        if Path(override).exists():
+            return override
+        logger.error("sticker-convert binary not found at %s; falling back to PATH lookup", override)
+    found = shutil.which("sticker-convert")
+    if found:
+        return found
+    # keep last resort name so error messages are clear if it truly is missing
+    return "sticker-convert"
+
+STICKER_CONVERT_BIN = _resolve_sticker_convert_bin()
 
 # Maximum stickers per WhatsApp pack
 MAX_PER_PACK = int(os.getenv("MAX_PER_PACK", "30"))
