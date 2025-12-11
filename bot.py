@@ -44,7 +44,8 @@ def _resolve_sticker_convert_bin():
     if override:
         if Path(override).exists():
             return override
-        logger.error("sticker-convert binary not found at %s; falling back to PATH lookup", override)
+        # logger not yet defined; use stderr for this early warning
+        print(f"sticker-convert binary not found at {override}; falling back to PATH lookup", file=sys.stderr)
     found = shutil.which("sticker-convert")
     if found:
         return found
