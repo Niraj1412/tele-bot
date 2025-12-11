@@ -1,73 +1,11 @@
-# -----------------------------
-# Python Cache & Build Artifacts
-# -----------------------------
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.so
-*.dll
-*.egg
-*.egg-info/
-dist/
-build/
-
-# -----------------------------
-# Virtual Environments
-# -----------------------------
-venv/
-env/
-ENV/
-.venv/
-.virtualenv/
-.idea/
-.vscode/
-
-# -----------------------------
-# Environment & Secrets
-# -----------------------------
+# Secrets
 .env
 *.env
-.env.*
-!example.env   # allow an example file if needed
 
-# -----------------------------
-# Telethon session files
-# -----------------------------
+# Telethon sessions
 *.session
 *.session-journal
 
-# If Telethon stores session in a subfolder
-telethon_session/
-session_storage/
-
-# -----------------------------
-# Sticker Convert Temp Output
-# -----------------------------
-/temp/
-/tmp/
-/logs/
-/debug/
-/output_*/
-/full_pack/
-/chunk_*/
-/*.wastickers
-
-# -----------------------------
-# OS-specific files
-# -----------------------------
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# -----------------------------
-# If using Docker
-# -----------------------------
-docker-compose.override.yml
-*.log
-
-# -----------------------------
-# If using PyCharm or VS Code
-# -----------------------------
-.idea/
-.vscode/
+# Python cache
+__pycache__/
+*.pyc
