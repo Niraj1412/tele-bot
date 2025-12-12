@@ -21,6 +21,8 @@ import tempfile
 import logging
 import subprocess
 from pathlib import Path
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
@@ -63,6 +65,9 @@ CMD_TIMEOUT = int(os.getenv("CMD_TIMEOUT", "600"))
 # sticker-convert tuning
 CONVERT_PROCESSES = int(os.getenv("STICKER_CONVERT_PROCESSES", "0"))  # 0 => let sticker-convert decide
 CONVERT_STEPS = os.getenv("STICKER_CONVERT_STEPS")  # optional override
+
+# Health/port (for platforms like Render Web Services)
+PORT = int(os.getenv("PORT", "0"))
 
 # Logging
 logging.basicConfig(
@@ -305,7 +310,31 @@ def build_application():
     app.add_handler(MessageHandler(filters.Sticker.ALL, handle_sticker))
     return app
 
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path in ("/", "/health", "/ping"):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"ok")
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+def start_health_server():
+    if PORT <= 0:
+        return
+    try:
+        server = HTTPServer(("0.0.0.0", PORT), HealthHandler)
+    except Exception as e:
+        print(f"Health server failed to bind on port {PORT}: {e}", file=sys.stderr)
+        return
+    logger.info("Health server listening on 0.0.0.0:%s", PORT)
+    server.serve_forever()
+
 def main():
+    if PORT > 0:
+        threading.Thread(target=start_health_server, daemon=True).start()
     app = build_application()
     logger.info("Starting bot (polling)...")
     app.run_polling()
